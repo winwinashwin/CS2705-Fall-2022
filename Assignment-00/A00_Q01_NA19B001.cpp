@@ -9,19 +9,19 @@
 
 using namespace std;
 
-int computeFib(int n) {
+long long computeFib(long long n) {
     if (n==0) return 0;
     if (n==1) return 1;
 
     return computeFib(n-1) + computeFib(n-2);
 }
 
-int smartFib(int n) {
-    static vector<int> fibstore = {0, 1};
+long long smartFib(long long n) {
+    static vector<long long> fibstore = {0, 1};
 
     if (n < fibstore.size()) return fibstore[n];
 
-    int fibn = smartFib(n-1) + smartFib(n-2);
+    long long fibn = smartFib(n-1) + smartFib(n-2);
     fibstore.push_back(fibn);
 
     return fibn;
@@ -29,12 +29,12 @@ int smartFib(int n) {
 
 int main(int argc, char **argv) {
     // Read Input
-    int n; cin >> n;
+    long long n; cin >> n;
 
     using namespace std::chrono;
 
     // Outputs from each implementation 
-    int fibn_rec, fibn_smart;
+    long long fibn_rec, fibn_smart;
     // Execution time for each implementation
     duration<long> duration_rec, duration_smart;
 
