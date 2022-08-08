@@ -12,42 +12,22 @@
 using namespace std;
 
 int find_missing(vector<int> &arr) {
-    int repeating, missing;
+    int n = arr.size();
+    int sum_expected = (n+1)*(n+2)/2;
+    int sum_actual = 0;
 
-    // Find repeating element
-    for (int i = 0; i < arr.size(); ++i) {
-        // Use absolute value of element as index
-        int idx = abs(arr[i]) - 1;
-        if (arr[idx] < 0) {
-            // If we encounter a negative value, we know it was visited before
-            repeating = idx + 1;
-        }
-        // Mark element at index as negative, denoting it was visited
-        arr[idx] *= -1;
-    }
+    for (int v : arr) sum_actual += v;
 
-    // Find first positive element in array, returns pointer to element
-    auto pos = find_if(arr.begin(), arr.end(), [](int n){ return n > 0; });
-    // Compute index and consequently the missing value
-    missing = (pos - arr.begin()) + 1;
-
-    return missing;
+    return sum_expected - sum_actual;
 }
 
 int main(int argc, char **argv) {
-    int n;
-    string line;
-    vector<int> arr;
-
-    getline(cin, line);
-    istringstream ss(line);
-
-    while (ss >> n) {
-        arr.push_back(n);
-    }
+    int n; cin >> n;
+    vector<int> arr(n);
+    for (int i = 0; i < n; ++i) cin >> arr[i];
 
     int missing = find_missing(arr);
-    
+
     cout << missing << endl;
 
     return EXIT_SUCCESS;
