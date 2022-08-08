@@ -2,7 +2,7 @@
 
 SHELL        = /bin/bash
 
-SRC := $(shell find . -name '*_NA19B001.cpp' -type f)
+SRC := $(shell find ./Assignment-* -name '*_NA19B001.cpp' -type f)
 EXE := $(patsubst %_NA19B001.cpp, bin/%, $(notdir $(SRC)))
 
 .PHONY: build-all

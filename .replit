@@ -1,6 +1,6 @@
 compile = ["make", "-s", "-j", "$(nproc --ignore=2)"]
 run = ""
-hidden = [".gitignore", "soln-template.cpp", "LICENSE", "**/*.o", "**/*.d", ".ccls-cache", "Makefile"]
+hidden = [".gitignore", "soln-template.cpp", "LICENSE", "**/*.o", "**/*.d", ".ccls-cache", "Makefile", "bin"]
 
 [languages.cpp]
 pattern = "**/*.{cpp,h}"
