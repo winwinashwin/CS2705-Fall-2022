@@ -1,6 +1,6 @@
 compile = ["make", "-s"]
 run = ""
-hidden = [".gitignore", "soln-template.cpp", "**/*.o", "**/*.d", ".ccls-cache", "Makefile"]
+hidden = [".gitignore", "soln-template.cpp", "LICENSE", "**/*.o", "**/*.d", ".ccls-cache", "Makefile"]
 
 [languages.cpp]
 pattern = "**/*.{cpp,h}"
