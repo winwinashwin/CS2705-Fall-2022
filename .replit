@@ -1,4 +1,4 @@
-compile = ["make", "-s"]
+compile = ["make", "-s", "-j", "$(nproc --ignore=2)"]
 run = ""
 hidden = [".gitignore", "soln-template.cpp", "LICENSE", "**/*.o", "**/*.d", ".ccls-cache", "Makefile"]
 

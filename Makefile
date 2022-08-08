@@ -1,9 +1,21 @@
-.DEFAULT_GOAL := package-all
-
-.ONESHELL:
-.SILENT: 
+.DEFAULT_GOAL := build-all
 
 SHELL        = /bin/bash
+
+SRC := $(shell find . -name '*_NA19B001.cpp' -type f)
+EXE := $(patsubst %_NA19B001.cpp, bin/%, $(notdir $(SRC)))
+
+.PHONY: build-all
+build-all: .build-init $(EXE)
+
+./bin/%: ./Assignment-*/%_NA19B001.cpp
+	g++ $< -o $@
+
+.PHONY: build-init
+.build-init:
+	mkdir -p ./bin
+
+.ONESHELL:
 
 .PHONY: new-soln
 new-soln:
@@ -30,5 +42,6 @@ package-all: clean
 
 .PHONY: clean
 clean:
+	[[ -d ./bin ]] && rm -rf ./bin
 	find . -name a.out -type f -delete
 	find . -maxdepth 1 -name *.zip -type f -delete
