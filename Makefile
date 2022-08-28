@@ -11,7 +11,7 @@ build-all: .build-init $(EXE)
 ./bin/%: ./Assignment-*/%_NA19B001.cpp
 	g++ $< -o $@
 
-.PHONY: build-init
+.PHONY: .build-init
 .build-init:
 	mkdir -p ./bin
 
