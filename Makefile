@@ -35,7 +35,7 @@ new-soln:
 
 .PHONY: package-all
 package-all: clean
-	for dirname in `find . -name Assignment-* -type d | sed 's|^./||'`; do
+	for dirname in `find . -name 'Assignment-*' -type d | sed 's|^./||'`; do
 		packed="CS2705-$${dirname}_NA19B001"
 		zip -r $$packed $$dirname
 	done
@@ -44,4 +44,4 @@ package-all: clean
 clean:
 	[[ -d ./bin ]] && rm -rf ./bin
 	find . -name a.out -type f -delete
-	find . -maxdepth 1 -name *.zip -type f -delete
+	find . -maxdepth 1 -name '*.zip' -type f -delete
