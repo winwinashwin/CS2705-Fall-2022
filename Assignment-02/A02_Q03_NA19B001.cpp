@@ -8,81 +8,106 @@
 
 using namespace std;
 
-// We represent level order traversal of binary trees in array form
-// - Index of left child of i = 2*i + 1
-// - Index of right child of i = 2*i + 2
-// - Index of parent of i = (i-1)>>1
+namespace BT {
+using data_t = long long;
 
-vector<int> btree;      // Stores input tree
-vector<int> btree_sum;  // Element at index `i` stores sum of subtree with root `btree[i]`
+struct Node {
+  data_t data;  // Value at node
+  data_t sum;   // Sum of subtree with this node as root
+  Node *parent; // Parent node
+  Node *left;
+  Node *right;
 
-// Compute index of left child
-int get_left_child(int i) {
-    int idx = 2*i + 1;
-    if (idx >= btree.size()) return -1;
-    return idx;
-} 
+  Node(data_t _data = 0LL)
+      : data(_data), sum(_data), left(nullptr), right(nullptr),
+        parent(nullptr) {}
+};
 
-// Check if node `i` has valid left child
-bool has_left(int i) {
-    int ileft = get_left_child(i);
-    return (ileft != -1 && btree[ileft] != -1);
+/**
+ * Build binary tree from level order traversal
+ *
+ * @param lot Level order traveral of binary tree
+ * @param[out] nodes Stores pointers to all nodes in binary tree
+ * @return Pointer to root of binary tree
+ */
+Node *build_tree(const vector<data_t> &lot, vector<Node *> &nodes) {
+  nodes.resize(lot.size(), nullptr);
+
+  for (int i = 0; i < nodes.size(); ++i) {
+    if (lot[i] == -1)
+      continue;
+    nodes[i] = new BT::Node(lot[i]);
+  }
+
+  for (int i = 0; i < nodes.size(); ++i) {
+    int ileft = 2 * i + 1;
+    if (ileft < nodes.size() && nodes[ileft]) {
+      nodes[i]->left = nodes[ileft];
+      nodes[ileft]->parent = nodes[i];
+    }
+
+    int iright = 2 * i + 2;
+    if (iright < nodes.size() && nodes[iright]) {
+      nodes[i]->right = nodes[iright];
+      nodes[iright]->parent = nodes[i];
+    }
+  }
+
+  return nodes[0];
 }
-
-// Compute index of right child
-int get_right_child(int i) {
-    int idx = 2*i + 2;
-    if (idx >= btree.size()) return -1;
-    return idx;
-}
-
-// Check if node `i` has valid right child
-bool has_right(int i) {
-    int iright = get_right_child(i);
-    return (iright != -1 && btree[iright] != -1);
-}
+} // namespace BT
 
 // Recursive function to generate modified binary tree
-void modify_tree(int iroot, bool is_right = false) {
-    /**
-     * We follow a postorder processing scheme so that the modification happens in a
-     * bottom-up fashion
-     */
-    if (has_left(iroot)) modify_tree(get_left_child(iroot));
-    if (has_right(iroot)) modify_tree(get_right_child(iroot), true);
+void modify_tree(BT::Node *root, bool is_right = false) {
+  /**
+   * We follow a postorder processing scheme so that the modification happens in
+   * a bottom-up fashion
+   */
+  if (!root)
+    return;
 
-    // Update subtree sum
-    btree_sum[iroot] = btree[iroot];
-    if (has_left(iroot)) btree_sum[iroot] += btree_sum[get_left_child(iroot)];
-    if (has_right(iroot)) btree_sum[iroot] += btree_sum[get_right_child(iroot)];
+  modify_tree(root->left);
+  modify_tree(root->right, true);
 
-    // Modify right nodes
-    if (is_right) {
-        int iparent = (iroot-1)>>1;
-        btree[iroot] += btree[iparent];
-        if (has_left(iparent)) {
-            int iparent_left = get_left_child(iparent);
-            btree[iroot] += btree_sum[iparent_left];
-        }
+  // Update subtree sum
+  if (root->left)
+    root->sum += root->left->sum;
+  if (root->right)
+    root->sum += root->right->sum;
+
+  // Modify right nodes
+  if (is_right) {
+    root->data += root->parent->data;
+    if (root->parent->left) {
+      root->data += root->parent->left->sum;
     }
+  }
 }
 
 int main(int argc, char **argv) {
-    int n; cin >> n;
-    int x;
-    while (cin >> x) {
-        btree.push_back(x);
-    }
-    btree_sum.resize(btree.size(), 0);
+  int n;
+  cin >> n;
+  vector<BT::data_t> level_order;
 
-    modify_tree(0);
+  for (int read = 0; read != n;) {
+    BT::data_t x;
+    cin >> x;
+    level_order.push_back(x);
+    if (x != -1)
+      read++;
+  }
 
-    // Print modified tree without missing nodes
-    for (int& v : btree) {
-        if (v == -1) continue;
-        cout << v << " ";
-    }
-    cout << endl;
+  vector<BT::Node *> nodes;
+  BT::Node *root = BT::build_tree(level_order, nodes);
 
-    return EXIT_SUCCESS;
+  modify_tree(root);
+
+  // Print modified tree without missing nodes
+  for (auto &node : nodes) {
+    if (node)
+      cout << node->data << " ";
+  }
+  cout << endl;
+
+  return EXIT_SUCCESS;
 }

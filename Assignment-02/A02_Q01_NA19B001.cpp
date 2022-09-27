@@ -7,74 +7,96 @@
 #include <vector>
 
 using namespace std;
-using ll = long long;
 
-// Stores level-order traversal of binary tree in array form.
-// For any index i,
-//   - left child of i will be at 2*i+1
-//   - right child of i will be at 2*i+2
-//   - parent of i will be at (i-1)>>1
-vector<ll> btree;
+namespace BT {
+    using data_t = long long;
 
-/**
- * Returns index of left child if present, else -1
- */
-int get_left_child(int i) {
-    int idx = 2*i + 1;
-    if (idx >= btree.size()) return -1;
-    else return idx;
-}
+    struct Node {
+        data_t data;
+        Node* left;
+        Node* right;
 
-/**
- * Returns index of right child if present, else -1
- */
-int get_right_child(int i) {
-    int idx = 2*i + 2;
-    if (idx >= btree.size()) return -1;
-    else return idx;
-}
+        Node(data_t _data = 0LL) : data(_data), left(nullptr), right(nullptr) {}
+    };
 
-int main(int argc, char **argv) {
-    int n; cin >> n;
-    int read = 0; // number of valid nodes (value != -1) read so far
-    while (1) {
-        if (read == n) break;
+    /**
+     * Build binary tree from level order traversal
+     *
+     * @param lot Level order traveral of binary tree
+     * @return Pointer to root of binary tree
+     */
+    Node* build_tree(const vector<data_t> &lot) {
+        vector<Node*> nodes(lot.size(), nullptr);
 
-        ll x; cin >> x;
-        btree.push_back(x);
-        if (x != -1) read++; 
-    }
-    ll target; cin >> target;
-
-    int ans = 0;
-
-    // The idea is to find the sum of nodes in the unique path from leaf->root for all
-    // leaf nodes in the binary tree and compare the sum with the target sum required
-
-    for (int i = btree.size()-1; i >= 0; --i) {
-        // Skip null nodes
-        if (btree[i] == -1) continue;
-        int ileft = get_left_child(i);
-        int iright = get_right_child(i);
-        // If node has valid left child, not a leaf node. Skip.
-        if (ileft != -1 && btree[ileft] != -1) continue;
-        // If node has valid right child, not a leaf node. Skip.
-        if (iright != -1 && btree[iright] != -1) continue;
-
-        ll sm = 0;
-        int iparent = i;
-        while (iparent) {
-            sm += btree[iparent];
-            if (sm > target) break;
-            iparent = (iparent-1)>>1;
+        for (int i = 0; i < nodes.size(); ++i) {
+            if (lot[i] == -1) continue;
+            nodes[i] = new BT::Node(lot[i]);
         }
-        // Sum value at root
-        sm += btree[iparent];
-        if (sm == target) ans++;
+
+        for (int i = 0; i < nodes.size(); ++i) {
+            int ileft = 2*i+1;
+            if (ileft < nodes.size() && nodes[ileft])
+                nodes[i]->left = nodes[ileft];
+
+            int iright = 2*i+2;
+            if (iright < nodes.size() && nodes[iright])
+                nodes[i]->right = nodes[iright];
+        }
+
+        return nodes[0];
+    }
+}  // BT
+
+/**
+ * Compute number of paths from root to leaf nodes whose sum is equal to target
+ *
+ * @param root Pointer to root of binary tree
+ * @param[in] sum_so_far Path sum so far
+ * @param target Target sum
+ * @param[out] nways Number of paths whose sum equals target
+ */
+void solve(BT::Node* root, BT::data_t& sum_so_far, const BT::data_t& target, int &nways) {
+    /*
+     * Traverse in preorder fashion and keep on summing up node values until a
+     * leaf node is encountered. At leaf node compare sum and update counter.
+     * Backtrack and proceed to next leaf node.
+     */
+
+    // Update sum
+    sum_so_far += root->data;
+
+    // Check if current node is a leaf node
+    if (!root->left && !root->right && sum_so_far == target) {
+        // Update counter and backtrack
+        nways++;
+        sum_so_far -= root->data;
+        return;
     }
 
-    cout << ans << endl;
-
-    return EXIT_SUCCESS;
+    // Move to left subtree
+    if (root->left) solve(root->left, sum_so_far, target, nways);
+    // Move to right subtree
+    if (root->right) solve(root->right, sum_so_far, target, nways);
+    // Backtrack
+    sum_so_far -= root->data;
 }
 
+int main() {
+    int n; cin >> n;
+    vector<BT::data_t> level_order;
+
+    for(int read = 0; read != n; ) {
+        BT::data_t x; cin >> x;
+        level_order.push_back(x);
+        if (x != -1) read++;
+    }
+
+    BT::data_t target; cin >> target;
+
+    BT::Node* root = BT::build_tree(level_order);
+
+    int nways = 0;
+    BT::data_t sm = 0;
+    solve(root, sm, target, nways);
+    cout << nways << endl;
+}
