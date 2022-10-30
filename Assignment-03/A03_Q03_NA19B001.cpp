@@ -10,21 +10,19 @@
 using namespace std;
 
 /**
- * Logic: A and B are k-strangers if length of shortest path between A and B is > k. We do a BFS
- *        starting at each node maintaining path length during traversal. Answer is updated when
- *        nodes with path length > k are encountered. If (u,v) are k-strangers counter is updated
- *        during BFS starting at u as well v which leads to double counting which is taken care of
- *        by halving the final result
+ * Logic: A and B are k-strangers if length of shortest path between A and B is greater than k. 
+ *        We do a BFS starting at each node maintaining path length during traversal. Answer is 
+ *        updated when nodes with path length > k are encountered. If (u,v) are k-strangers counter
+ *        is updated during BFS starting at u as well v which leads to double counting. Hence final
+ *        result is halved.
  */
 
-vector<vector<int>> adj;  // Graph as adjacency list
-int n, k, n_pairs;
-
 // BFS starting at u
-void bfs(int u) {
+int bfs(const vector<vector<int>>& adj, const int k, int u) {
+    int n_pairs = 0, level = 0, n = adj.size();
+
     vector<bool> visited(n, false);
 
-    int level = 0;
     queue<int> q;
     visited[u] = true;
     q.push(u);
@@ -32,8 +30,7 @@ void bfs(int u) {
         int s = q.size();
         level++;
         while (s--) {
-            int v = q.front();
-            q.pop();
+            int v = q.front(); q.pop();
 
             for(int w : adj[v]) {
                 if (visited[w]) continue;
@@ -46,21 +43,23 @@ void bfs(int u) {
 
     // All pairs (u,v) such that v in unreachable from u are also k-strangers
     for (int v = 0; v < n; ++v) if (!visited[v]) n_pairs++;
+
+    return n_pairs;
 }
 
 int main(int argc, char **argv) {
-    cin >> n >> k;
-    adj.resize(n);
-    int p; cin >> p;
+    int n, k, p; cin >> n >> k >> p;
+    vector<vector<int>> adj(n);
+
     while (p--) {
         int u, v; cin >> u >> v;
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
 
-    n_pairs = 0;
+    int n_pairs = 0;
     for (int u = 0; u < n; ++u)
-        bfs(u);
+        n_pairs += bfs(adj, k, u);
 
     cout << n_pairs/2 << endl;
     return EXIT_SUCCESS;
