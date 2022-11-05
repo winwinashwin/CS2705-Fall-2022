@@ -5,55 +5,45 @@
 
 #include <iostream>
 #include <vector>
-#include <stack>
 
 using namespace std;
 
 int main(int argc, char **argv) {
     /**
-     * Logic: Since each city has at most one path going to another city that connects it to the
-     *        other city, strongly connected components if present will be cycles in the graph.
-     *        We do a simple DFS to detect cycles maintaing the levels of nodes during traversal.
-     *        Once a cycle is detected, we can compute the SCC size using the level info of nodes.
+     * Logic: Each node in the graph has atmost one outgoing edge, SCCs if present will be cycles
+     *        in the graph. To find the largest SCC, We can iterate each subgraph keeping a level 
+     *        array. On reaching a previously visited node, if in the same subgraph, we update the answer.
+     *        Each node is visited once, hence O(n)
      */
 
     int n, m; cin >> n >> m;
-    vector<vector<int>> adj(n);  // Graph as adjacency list
+    vector<int> edges(n, -1);  // Nodes have atmost one outgoing edge, -1 denotes outdegree 0
     while (m--) {
         int u, v; cin >> u >> v;
-        adj[u].push_back(v);
+        edges[u] = v;
     }
 
-    vector<bool> visited(n,false);
     vector<int> level(n);
+    int largest_scc = -1;
+    int level_counter = 0;
 
-    int largest_scc = 0;
     for (int u = 0; u < n; ++u) {
-        if (visited[u]) continue;
+        int v = u, level_u = level_counter;
 
-        // Depth First Search on graph starting at `u`
-        fill(level.begin(), level.end(), 0);
-        stack<int> st;
-        st.push(u);
-        while (!st.empty()) {
-            int v = st.top(); st.pop();
-            visited[v] = true;
+        // Traverse all unvisited nodes in subgraph
+        while (v != -1 && !level[v]) {
+            level[v] = level_counter++;
+            v = edges[v];
+        }
 
-            for (auto& w : adj[v]) {
-                if (visited[w]) {
-                    // Cycle found, compute size and update answer
-                    largest_scc = max(largest_scc, level[v]-level[w]+1);
-                    continue;
-                }
-
-                // update level
-                level[w] = level[v] + 1;
-                st.push(w);
-            }
+        if (v != -1 && level[v] >= level_u) {
+            // Encountered a previously visited node in same subgraph
+            largest_scc = max(largest_scc, level_counter - level[v]);
         }
     }
 
     cout << largest_scc << endl;
+
     return EXIT_SUCCESS;
 }
 
