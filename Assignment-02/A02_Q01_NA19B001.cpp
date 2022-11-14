@@ -28,17 +28,17 @@ namespace BT {
     Node* build_tree(const vector<data_t> &lot) {
         vector<Node*> nodes(lot.size(), nullptr);
 
-        for (int i = 0; i < nodes.size(); ++i) {
+        for (size_t i = 0; i < nodes.size(); ++i) {
             if (lot[i] == -1) continue;
             nodes[i] = new BT::Node(lot[i]);
         }
 
-        for (int i = 0; i < nodes.size(); ++i) {
-            int ileft = 2*i+1;
+        for (size_t i = 0; i < nodes.size(); ++i) {
+            size_t ileft = 2*i+1;
             if (ileft < nodes.size() && nodes[ileft])
                 nodes[i]->left = nodes[ileft];
 
-            int iright = 2*i+2;
+            size_t iright = 2*i+2;
             if (iright < nodes.size() && nodes[iright])
                 nodes[i]->right = nodes[iright];
         }

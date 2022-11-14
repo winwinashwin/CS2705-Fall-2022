@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     for (auto& e : arr2) cin >> e;
 
     int i = 0, j = 0;
-    int mid1, mid2;
+    int mid1 = 0, mid2 = 0;
 
     for (int k = 0; k <= (n1 + n2)/2; ++k) {
         mid2 = mid1;

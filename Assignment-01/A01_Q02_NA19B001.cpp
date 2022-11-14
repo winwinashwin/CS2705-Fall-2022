@@ -88,7 +88,7 @@ namespace ll {
     }
 
     void merge_lists(DLinkedList &l1, DLinkedList &l2, const pair<char, int> &pos) {
-        Node *ptr;
+        Node *ptr = nullptr;
         int i;
         switch (pos.first) {
             case 'L': 

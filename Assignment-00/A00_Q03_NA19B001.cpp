@@ -11,7 +11,7 @@ using namespace std;
 int sub_arrays_d5(const vector<int> &arr) {
     int res = 0;
     int prev_idx = -1;
-    for (int i = 0; i < arr.size(); ++i) {
+    for (size_t i = 0; i < arr.size(); ++i) {
         if (arr[i] % 5 == 0) {
             res += (i-prev_idx)*(arr.size() - i);
             prev_idx = i;

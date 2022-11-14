@@ -14,9 +14,9 @@ using data_t = long long;
 struct Node {
   data_t data;  // Value at node
   data_t sum;   // Sum of subtree with this node as root
-  Node *parent; // Parent node
   Node *left;
   Node *right;
+  Node *parent; // Parent node
 
   Node(data_t _data = 0LL)
       : data(_data), sum(_data), left(nullptr), right(nullptr),
@@ -33,20 +33,20 @@ struct Node {
 Node *build_tree(const vector<data_t> &lot, vector<Node *> &nodes) {
   nodes.resize(lot.size(), nullptr);
 
-  for (int i = 0; i < nodes.size(); ++i) {
+  for (size_t i = 0; i < nodes.size(); ++i) {
     if (lot[i] == -1)
       continue;
     nodes[i] = new BT::Node(lot[i]);
   }
 
-  for (int i = 0; i < nodes.size(); ++i) {
-    int ileft = 2 * i + 1;
+  for (size_t i = 0; i < nodes.size(); ++i) {
+    size_t ileft = 2 * i + 1;
     if (ileft < nodes.size() && nodes[ileft]) {
       nodes[i]->left = nodes[ileft];
       nodes[ileft]->parent = nodes[i];
     }
 
-    int iright = 2 * i + 2;
+    size_t iright = 2 * i + 2;
     if (iright < nodes.size() && nodes[iright]) {
       nodes[i]->right = nodes[iright];
       nodes[iright]->parent = nodes[i];

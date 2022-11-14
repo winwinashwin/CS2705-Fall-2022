@@ -19,7 +19,7 @@ long long computeFib(long long n) {
 long long smartFib(long long n) {
     static vector<long long> fibstore = {0, 1};
 
-    if (n < fibstore.size()) return fibstore[n];
+    if (n < (long long)fibstore.size()) return fibstore[n];
 
     long long fibn = smartFib(n-1) + smartFib(n-2);
     fibstore.push_back(fibn);
@@ -44,6 +44,7 @@ int main(int argc, char **argv) {
         fibn_rec = computeFib(n);
         auto stop = high_resolution_clock::now();
         duration_rec = duration_cast<seconds>(stop - start);
+        (void)fibn_rec;
     }
 
     // Measure execution time for `smartFib`
